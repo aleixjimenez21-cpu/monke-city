@@ -1,45 +1,70 @@
-# MONKE CITY — first playable chapter
+# MONKE CITY — upgraded Mission 001
 
-Start with $7 outside Monke Motel. Walk through the outskirts, read the road sign, and reach the Downtown overlook. The full journey takes around 45 seconds including the opening and dialogue. Mission #002 is intentionally not implemented.
+This extends the existing RichMonke game. The original sprite, motel, city drawing, parallax, loading sequence, directional movement, sound controls and responsive presentation remain in place.
 
-## Run
+## Play
 
-Use Node 22.13 or newer. `npm install`, then `npm run dev`. `npm run build` creates the production build.
+- A / D or left / right arrows: move.
+- SPACE: jump. Jumping includes a short input buffer and coyote time.
+- E: interact with a nearby person, object or door.
+- Mobile: hold the direction buttons, tap JUMP, and tap the contextual interaction button. Movement and jumping support simultaneous touches.
+- Escape / menu: pause. Progress saves locally. Restart clears only this mission's local save.
 
-## Controls
+The exploration route is designed for roughly 3–5 minutes of reading, discovery and play. These are pacing targets, not enforced timers. A fast player can finish sooner.
 
-- Desktop: A/D or left/right arrows to move; E to read the nearby sign.
-- Mobile: hold the left/right touch buttons; tap READ SIGN.
-- Use CONTINUE after the dialogue. Escape or the menu button pauses. Sound is off until enabled explicitly.
-- The menu supports restart, story, mission details, and clearly marked project/community placeholders.
+## Mission route
 
-## Structure
+1. Collect nearby fictional Monke Cash: $7 → $8 → $10 → $11. Jump the broken fence.
+2. Meet the Doubter and choose WATCH ME or WHAT DO I NEED.
+3. Enter Monke Stop. Discover the TV transmission, district map and community terminal. The store supports walking, jumping, shelf platforms and a hidden banana.
+4. Explore the alley, poster and strange vending machine. Find more cash and collectibles.
+5. Meet the placeholder ApeOnFone at the bench. His phone encounter focuses on the story, not financial returns. It is a concept encounter, not a confirmed collaboration.
+6. Read the mission board. Choose a future district in a device-local prototype vote. No live vote totals or backend are presented.
+7. Cross the construction section: three obstacles, a puddle and a moving cart. Hits cause only a brief stumble; no death or cash penalty.
+8. Reach the Crown Tower overlook. The final sequence reports actual collected cash, bananas and fictional story access. Mission 002 remains locked.
 
-- `app/page.tsx`: game entry point.
-- `game/Game.tsx`: React Game coordinator, GameHUD, DialogueSystem, GameMenu and touch controls.
-- `game/systems.ts`: GameState, Player, Camera, ParallaxLayer, InteractionPoint, MissionSystem, SceneTransition and AudioManager.
-- `game/environment.ts`: GameScene and all code-drawn environment assets: motel, shops, cars, skyline, Crown Tower, street props and six parallax layers.
-- `game/game.css`: game presentation, responsive layouts and reduced-motion treatment.
-- `public/assets/character/richmonke.png`: temporary transparent character sprite.
+Five bananas unlock EARLY MONKE. There are three optional secrets. Collecting every cash pickup yields $23; the ending reports the player's actual total rather than inventing a fixed result. All game currency and collectibles have no real-world monetary value.
 
-## Replace the character
+## Run and validate
 
-Replace `public/assets/character/richmonke.png` with a transparent full-body PNG. Character loading and drawing are isolated in `GameScene.load()` and `GameScene.drawPlayer()` in `game/environment.ts`. Adjust the draw dimensions there to retain the replacement's proportions and align its feet to the ground. The temporary representation uses idle breathing and a walking sway; dedicated walking frames can replace that drawing function without changing movement, camera or mission logic. Preserve brown fur, orange/tan face, green black-framed sunglasses and yellow shorts. Chapter 01 has no jewelry.
+Use Node 22.13 or newer. Dependencies already exist in this checkout.
 
-## Add Mission #002 later
+- `npm run dev` builds and serves the game on port 3000.
+- `npm run build` builds static production output.
+- `node scripts/test.mjs` runs the deterministic mission and gameplay checks.
+- `node node_modules/typescript/bin/tsc --noEmit` checks types.
 
-The `missions` array in `game/systems.ts` stores the ID, name, objective, spawn/end coordinates, interaction radius and dialogue, and next-mission link. Add a second definition and a new GameScene district, then extend MissionSystem to select a definition by ID and pass it to the scene/UI instead of the first chapter default. Route the ending action to that definition only when the second district exists. The current prototype intentionally ends with TO BE CONTINUED.
+On this Windows workspace, `node scripts/dev.mjs` and `node scripts/build.mjs` can run directly if the npm launcher is unavailable. The existing lightweight Rolldown build is preserved. Restart the preview command after source edits, or rebuild and refresh the browser when the existing static server is already running.
 
-## Asset provenance
+## Architecture
 
-Environment art is drawn directly in Canvas. The temporary character was generated with the built-in image-generation tool using the supplied official RichMonke image as its identity reference. Prompt: preserve dark warm brown fur, orange/tan muzzle, vibrant green sunglasses with thick black frames, swept spiky head, stocky cartoon proportions, clean bold linework and yellow/orange shorts; remove chain and all accessories; full-body relaxed standing pose on true transparency. The generated sprite faces left and is flipped in the renderer as needed.
+- `client.tsx` and `app/page.tsx`: existing entrypoints, both using the same Game.
+- `game/Game.tsx`: canvas lifecycle, keyboard/touch input and existing opening presentation.
+- `game/systems.ts`: existing Player, Camera, GameState, MissionSystem, SceneTransition, ParallaxLayer and AudioManager, extended for the new chapter.
+- `game/gameplay.ts`: PlayerController, JumpSystem, CollisionSystem, CollectibleSystem, AchievementSystem, NPCSystem, InteractionSystem, DialogueSystem, ChoiceSystem, InteriorSystem, CommunityBoard, VoteAdapter and ProgressStore.
+- `game/runtime.ts`: coordinates scene changes, interactions, mission progression, saves and game events.
+- `game/content.ts`: mission objectives, encounters, dialogue branches, platforms, pickups, vote choices and future official links.
+- `game/environment.ts`: retained city artwork and RichMonke renderer.
+- `game/worldObjects.ts`: new obstacles, NPC placeholders, collectibles, mission board, construction area and store interior.
+- `game/GameHUD.tsx`: cash, collectibles, next objective and contextual prompts.
+- `game/GamePanels.tsx`: discoveries, map, dialogue choices, board, pause and ending.
+- `game/game.css`: original presentation plus responsive upgrade styles.
+- `game/mission.test.ts`: headless gameplay/integration tests.
 
-## Prototype scope
+## Assets and extension points
 
-No wallet connection, transaction, token price, financial claims, account system or remote player persistence. Audio uses quiet synthesized placeholders. Target is 60 fps using requestAnimationFrame, capped device pixel ratio and delta time. Physical iPhone/Android and browser performance testing are still needed before a public release.
+The RichMonke sprite remains at `public/assets/character/richmonke.png`, unchanged. Replace it with approved full-body transparent artwork and adapt `GameScene.drawPlayer()` when dedicated idle/walk/jump frames arrive. Original built-in image generation used the supplied official character reference, preserving fur, face, green sunglasses, yellow shorts and cartoon identity while removing jewelry.
 
-## Build and validation notes
+Environment assets are code-drawn in `game/environment.ts` and `game/worldObjects.ts`. The interior shares the same renderer and sprite. ApeOnFone's drawn NPC is explicitly temporary.
 
-The project retains the Sites React scaffold and accessible Shadcn dialog. On this Windows host, the Vinext runner could not spawn its platform helper. The working default build uses its installed Rolldown bundler directly to produce a static client game; `client.tsx` mounts the same Game used by `app/page.tsx`. `scripts/dev.mjs` builds and serves that output. Restart the dev command after source edits.
+To add the next chapter later, create another mission definition using `game/content.ts`, provide its scene content and select that mission in MissionSystem. The chapter-one orchestrator remains isolated in `game/runtime.ts`; other renderers and generic gameplay systems do not need rebuilding. No next district is playable yet.
 
-Validation: production bundle and TypeScript checks passed. Movement, acceleration/deceleration, bounds, sign proximity, mission completion gate, camera lag and transition checks passed. The local route returned HTTP 200. Browser interaction tests and physical mobile-device tests were not performed. Optional WebMCP read/start tools are feature-detected; no supported WebMCP validation context was available.
+Set the approved X/story and Telegram/community URLs in `communityLinks` in `game/content.ts`. Until then, CTA buttons show an honest coming-soon message. Replace `LocalVoteAdapter` with an authenticated backend adapter when real community voting is available; do not relabel it live until that service is connected.
+
+Saves use `richmonke.mission001.v2` in localStorage. Pickup IDs are deduplicated and validated; cash is recomputed from collected items. Unsupported, malformed and unavailable storage fail gracefully. Resuming an interior save returns to the store's street entrance while retaining discoveries and collectibles.
+
+## Verification and limits
+
+Production bundle and TypeScript checks pass. Tests cover movement, jump and collision, reachable elevated collectibles, exact cash progression, both NPC branches, required discoveries, store entry/exit, voting, incomplete-objective checkpoint, hazard recovery, ending, achievement, persistence and malformed saves. The local HTTP route responds successfully.
+
+Browser interaction tests, physical iPhone/Android tests, visual QA and measured frame-rate/pacing tests have not been performed. The existing optional WebMCP read/start tools are retained and updated; no supported WebMCP validation context was available. This upgrade is prepared locally; the already published initial version is not changed by the editing request alone.
