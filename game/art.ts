@@ -1,0 +1,14 @@
+/** Rendering assets only. No collision, mission or input state lives here. */
+export type Frame={image:CanvasImageSource;x:number;y:number;w:number;h:number};
+export const artUrls={interior:'/assets/art/interior.webp',skyline:'/assets/art/skyline.webp',buildings:'/assets/art/buildings.webp',npcs:'/assets/art/npcs.webp',hero:'/assets/art/richmonke-poses.webp'};
+export class ArtLibrary {
+ images:Partial<Record<keyof typeof artUrls,HTMLImageElement>>={};hero:Frame[]=[];npcs:Frame[]=[];promise:Promise<void>|null=null;
+ load(){if(this.promise)return this.promise;this.promise=Promise.all(Object.entries(artUrls).map(async([key,url])=>{const im=new Image();im.decoding='async';im.src=url;await new Promise<void>(resolve=>{im.onload=()=>resolve();im.onerror=()=>resolve();});if(!im.naturalWidth)return;this.images[key as keyof typeof artUrls]=im;if(key==='hero')this.hero=this.regions(im,[[87,13,272,423],[477,16,305,415],[860,14,344,416],[48,446,348,375],[469,444,340,377],[857,437,355,362],[60,882,343,329],[487,832,341,406],[951,831,207,410]]);if(key==='npcs')this.npcs=this.regions(im,[[76,48,289,598],[467,176,348,465],[852,82,379,568],[33,658,424,573],[490,656,336,572],[861,673,376,555]]);})).then(()=>{});return this.promise;}
+ private regions(im:HTMLImageElement,boxes:number[][]){return boxes.map(([x,y,w,h])=>({image:im,x:x-1,y:y-1,w:w+2,h:h+2}));}
+
+}
+export const art=new ArtLibrary();
+export function frame(c:CanvasRenderingContext2D,f:Frame,x:number,y:number,height:number){const width=height*f.w/f.h;c.drawImage(f.image,f.x,f.y,f.w,f.h,x-width/2,y-height,width,height);}
+export function goldCoin(c:CanvasRenderingContext2D,x:number,y:number,r=18,rotation=1){c.save();c.translate(x,y);c.scale(Math.max(.28,Math.abs(rotation)),1);c.shadowColor='#ffc847';c.shadowBlur=13;const gradient=c.createLinearGradient(-r,-r,r,r);gradient.addColorStop(0,'#fff0ac');gradient.addColorStop(.45,'#ffc545');gradient.addColorStop(1,'#b8771e');c.fillStyle=gradient;c.strokeStyle='#34281f';c.lineWidth=3;c.beginPath();c.arc(0,0,r,0,Math.PI*2);c.fill();c.stroke();c.shadowBlur=0;c.strokeStyle='#ffec93';c.lineWidth=1.4;c.beginPath();c.arc(-1,-1,r-4,0,Math.PI*2);c.stroke();c.rotate(-.4);c.lineWidth=6;c.strokeStyle='#76511e';c.beginPath();c.arc(0,-4,r*.5,0,2.9);c.stroke();c.lineWidth=3.5;c.strokeStyle='#fff0a1';c.stroke();c.restore();}
+export function softLight(c:CanvasRenderingContext2D,x:number,y:number,r:number,color:string){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,color);g.addColorStop(1,color.slice(0,7)+'00');c.fillStyle=g;c.fillRect(x-r,y-r,r*2,r*2);}
+export function sparkle(c:CanvasRenderingContext2D,x:number,y:number,r:number,color:string){c.fillStyle=color;c.beginPath();c.moveTo(x,y-r);c.quadraticCurveTo(x+1,y-1,x+r,y);c.quadraticCurveTo(x+1,y+1,x,y+r);c.quadraticCurveTo(x-1,y+1,x-r,y);c.quadraticCurveTo(x-1,y-1,x,y-r);c.fill();}

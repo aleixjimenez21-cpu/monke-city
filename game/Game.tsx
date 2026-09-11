@@ -26,7 +26,8 @@ export default function Game(){
   addEventListener('keydown',down);addEventListener('keyup',up);addEventListener('resize',resize);addEventListener('blur',blur);addEventListener('pagehide',blur);document.addEventListener('visibilitychange',visibility);
   const frame=(now:number)=>{const dt=Math.min(.035,last?(now-last)/1000:0);last=now;
    if(visible){const d=Number(keys.current.has('d')||keys.current.has('arrowright'))-Number(keys.current.has('a')||keys.current.has('arrowleft'));g.update(dt,d);uiClock+=dt;if(uiClock>.08){uiClock=0;setView(g.snapshot());}}
-   const z=g.reduced?1:g.camera.zoom,shake=!g.reduced&&g.camera.shake>0?Math.sin(g.time*100)*2:0;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,c.width,c.height);ctx.setTransform(c.width/g.viewWidth*z,0,0,c.height/800*z,(1-z)*c.width*.5+shake,(1-z)*c.height*.5);
+   scene.character.interior=g.state.scene==='stop';scene.character.expression=g.state.phase==='ending'?'confident':g.state.phase==='dialogue'?(g.dialogue.node?.effect==='crown'?'surprised':g.dialogue.encounter?.id==='doubter'?(g.dialogue.node?.choices?'thinking':'confident'):'interact'):'idle';
+   const z=g.reduced?1:g.camera.zoom,shake=!g.reduced&&g.camera.shake>0?Math.sin(g.time*100)*2:0;ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,c.width,c.height);ctx.setTransform(c.width/g.viewWidth*z,0,0,c.height/800*z,(1-z)*c.width*.5+shake,(1-z)*c.height*.5+scene.character.landingOffset);
    if(g.state.scene==='stop')drawInterior(ctx,g.viewWidth,800,g,scene);else scene.draw(ctx,g.viewWidth,800,g.camera,g.player,g.time,g.reduced,g.state.phase);
    raf=requestAnimationFrame(frame);
   };raf=requestAnimationFrame(frame);setView(g.snapshot());
@@ -41,7 +42,7 @@ export default function Game(){
  {view.phase==='loading'&&<div className="loading"><div className="load-bars">▰ ▰ ▰</div><span>LOADING MONKE CITY...</span></div>}
  {view.phase==='intro'&&<div className="intro" key={intro}><span>{['NET WORTH','LOCATION','MISSION #001'][intro]}</span><strong>{['$7','MONKE MOTEL','GET INTO MONKE CITY'][intro]}</strong></div>}
  {view.phase==='ready'&&<section className="start-screen"><div className="chapter-pill"><i/> A RICHMONKE STORY · CHAPTER 01</div><h1>MONKE<br/><em>CITY</em><span className="title-star">✦</span></h1><p>START WITH <b>$7.</b> <span>DREAM BIGGER.</span></p><button className="primary" onClick={()=>act(g=>g.start(g.hasSave))}>{view.hasSave?'CONTINUE JOURNEY':'START JOURNEY'} <span>→</span></button>{view.hasSave&&<button className="text-button fresh-start" onClick={()=>setMenu(true)}>Start a fresh journey</button>}<div className="start-note">EXPLORE. DISCOVER. EARN YOUR WAY IN.</div></section>}
- {active&&view.phase!=='ending'&&<GameHUD view={view} onInteract={()=>act(g=>g.interact())}/>}
+ {active&&view.phase!=='ending'&&<GameHUD anchor={engine.current&&view.near?Math.max(12,Math.min(88,100*(view.near.x-engine.current.camera.x)/engine.current.viewWidth)):50} view={view} onInteract={()=>act(g=>g.interact())}/>}
  <DiscoveryPanel view={view} onNext={choice=>act(g=>g.advance(choice))} onClose={()=>act(g=>g.closeDialogue())} onVote={async choice=>{if(engine.current){await engine.current.vote(choice);setView(engine.current.snapshot());}}}/>
  {view.phase==='ending'&&<Ending view={view} onReplay={()=>act(g=>g.reset())}/>}
  {view.phase==='travel'&&<div className="interior-transition"><span>{view.scene==='stop'?'MONKE STOP':'THE OUTSKIRTS'}</span></div>}

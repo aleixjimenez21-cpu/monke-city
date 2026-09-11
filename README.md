@@ -68,3 +68,13 @@ Saves use `richmonke.mission001.v2` in localStorage. Pickup IDs are deduplicated
 Production bundle and TypeScript checks pass. Tests cover movement, jump and collision, reachable elevated collectibles, exact cash progression, both NPC branches, required discoveries, store entry/exit, voting, incomplete-objective checkpoint, hazard recovery, ending, achievement, persistence and malformed saves. The local HTTP route responds successfully.
 
 Browser interaction tests, physical iPhone/Android tests, visual QA and measured frame-rate/pacing tests have not been performed. The existing optional WebMCP read/start tools are retained and updated; no supported WebMCP validation context was available. This upgrade is prepared locally; the already published initial version is not changed by the editing request alone.
+
+## Illustrated edition (visual upgrade)
+
+The existing mission, dialogue text, triggers, collectible positions, collision geometry, movement physics and save format are unchanged. Presentation now uses compressed illustrated skyline, transparent storefronts, a warm shop interior, six distinct dressed NPCs and a nine-pose RichMonke atlas. Character drawing includes pose selection, breathing, stride bounce, jump/landing squash, interaction poses, rim lighting and dust. UI includes original banana-coin SVGs, object-positioned prompts and portrait dialogue panels.
+
+Art files are in `public/assets/art/` (about 1.6 MB combined). Source bounds for each character are explicit in `game/art.ts` because the generated atlas is not a perfectly regular grid. The original character remains as a load fallback. The walk/run pose pairs have modest stride differences; this is a compact atlas animation rather than a fully rigged production character. Reduced-motion settings disable secondary animation. Decorative backgrounds and NPCs do not add collision surfaces or interactions. ApeOnFone remains a concept placeholder with the existing disclosure.
+
+Validation: existing automated mission suite passes; TypeScript and production build pass. Browser visual inspection covered the motel, portrait dialogue at desktop and 390×844, and shop interior. This is not a performance benchmark on physical mobile hardware. Rendering checks used a separate disposable harness without modifying the player's saved game.
+
+See `ART-DIRECTION.md` for asset briefs and generation provenance.
