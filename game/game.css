@@ -30,3 +30,12 @@
 @media(max-width:650px){.mission{min-width:280px;max-width:100%;top:74px}.mission .objective{font-size:20px}.wallet{min-width:80px}.wallet strong{font-size:31px}.location-reveal{top:27%}.location-reveal>span{font-size:8px;letter-spacing:1px}.mission-toast{top:163px;font-size:16px;max-width:90%}.panel-npc .dialogue-line{font-size:18px!important}.episode-ending{padding:12px}.episode-finale{padding:14px;max-height:83dvh}.episode-finale p{font-size:18px}.episode-finale .final-buttons{flex-direction:column}.episode-receipt span{display:block;margin-top:8px}.episode-finale h2{font-size:41px}.skip-ending{right:20px;bottom:20px}.touch-controls,.touch-jump{bottom:28px}.interact{max-width:220px}.tutorial{bottom:23%}}
 @media(max-height:520px){.mission{top:0;min-width:300px}.mission .objective{font-size:18px}.location-reveal{top:27%}.mission-toast{top:85px}.episode-finale{max-height:90dvh;padding:8px 24px}.episode-finale h2{font-size:36px;margin:10px 0}.episode-finale p{font-size:16px;margin:13px 0}.episode-finale .final-buttons{flex-direction:row}.episode-receipt{margin-top:12px}.episode-finale .primary{min-width:195px;font-size:10px}.episode-finale .text-button{margin-top:12px}}
 @media(prefers-reduced-motion:reduce){.location-reveal{animation:none}.ending-beat,.episode-finale,.panel-npc .dialogue-line{animation:none}}
+
+/* Compact playable introduction: the existing game palette, without a title detour. */
+.phase-ready .start-screen{inset:0;top:0;left:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#080b10;text-align:center;animation:none;padding:80px 20px;z-index:8}
+.phase-ready .brand,.phase-ready .top-actions{z-index:10}
+.start-screen h1.opening-worth{font-size:clamp(88px,17vh,150px);line-height:1;margin:10px 0 22px;color:#b8fb70;filter:none;letter-spacing:-4px}
+.opening-location{display:flex;flex-direction:column;gap:8px}.opening-location strong{font-size:19px;letter-spacing:2px}
+.start-screen p{display:flex;flex-direction:column;gap:8px;margin:22px 0}.start-screen p small{font-size:10px;color:#b8fb70}.start-screen p b{font-size:17px;letter-spacing:1px}
+.start-screen .start-note{margin-top:22px}.start-screen .primary{padding:17px 25px}.panel-board details{margin:8px 0 14px}.panel-board summary{cursor:pointer;color:#b8fb70;font-size:12px;padding:10px 0}
+@media(max-height:600px){.phase-ready .start-screen{padding:45px 16px}.start-screen h1.opening-worth{font-size:70px;margin:4px 0 10px}.start-screen p{margin:12px 0}.start-screen .start-note{margin-top:12px}}

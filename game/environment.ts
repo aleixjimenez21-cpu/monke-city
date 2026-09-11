@@ -38,12 +38,12 @@ export class GameScene {
     for(let i=0;i<5;i++){rect(c,49+i*106,478,65,145,'#2a2a3c');rect(c,57+i*106,488,49,64,i===2?'#ddab69':'#4c5b6a');for(let j=0;j<4;j++)rect(c,58+i*106,490+j*15,47,3,'#20283b88',0);text(c,`0${i+1}`,82+i*106,470,11,'#c7b2a1','center');ellipse(c,103+i*106,559,2,2,'#c5ac71');}
     rect(c,12,610,586,18,'#786970');rect(c,54,337,17,70,'#332e3e');rect(c,425,337,17,70,'#332e3e');c.save();c.translate(37,335);c.rotate(-.035);rect(c,0,0,422,63,'#2b2b3f',5);neon(c,'MONKE MOTEL',18,44,43,'#f6b978');c.restore();rect(c,446,450,121,28,'#282737');if(reduced||Math.sin(time*2)>.0)neon(c,'VACANCY',458,469,17,'#accc7b');
     }else this.storefront(c,0,20,640,610);
-    car(c,685,'#79667c');lamp(c,890);if(art.images.buildings)this.storefront(c,1,1160,644,460);else shop(c,1150,300,'MONKE STOP','#64765a');rect(c,1475,556,47,87,'#66636f');rect(c,1470,551,57,10,'#39394b');
-    if(art.images.buildings)this.storefront(c,2,1660,644,420);else shop(c,1730,245,'NIGHT OWL','#665374');lamp(c,2050);rect(c,2130,468,62,176,'#616b82');rect(c,2138,482,46,95,'#1f3542');neon(c,'SODA',2141,505,15,'#98efb5');for(let j=0;j<3;j++)for(let i=0;i<3;i++)rect(c,2144+i*12,520+j*15,6,10,'#c9b687',0);
-    this.facade(c,2420,370,275,'THE GOOD LIFE',true);car(c,2850,'#718f8b');lamp(c,3060);
-    rect(c,3100,305,9,340,'#242c3c');rect(c,3370,305,9,340,'#242c3c');rect(c,3068,290,355,165,'#282e43',6);text(c,'SOMEWHERE',3091,328,26,'#e9dfc0');text(c,'ABOVE ORDINARY.',3091,360,25,'#e9dfc0');crown(c,3320,382,47);text(c,'CROWN RESIDENCES',3091,420,14,'#a5d891');
-    for(let i=0;i<10;i++){rect(c,3470+i*130,590,5,69,'#383848');rect(c,3470+i*130,603,130,3,'#535261',0);rect(c,3470+i*130,621,130,3,'#535261',0);}
-    rect(c,3765,468,9,197,'#777c7c');rect(c,3650,452,248,80,'#335e56',5);rect(c,3658,460,232,64,'#335e56',1);text(c,'MONKE CITY',3675,490,25,'#ece6c7');text(c,'3 KM  →',3675,517,22,'#ece6c7');lamp(c,4020);
+    car(c,650,'#79667c');lamp(c,810);
+    if(art.images.buildings)this.storefront(c,1,875,644,460);else shop(c,960,300,'MONKE STOP','#64765a');
+    if(art.images.buildings)this.storefront(c,2,1390,644,380);else shop(c,1390,300,'NIGHT OWL','#665374');lamp(c,1740);
+    this.facade(c,1990,300,255,'THE HEIGHTS',true);lamp(c,2360);
+    this.facade(c,2520,270,265,'CROWN WORKS',true);
+    rect(c,2910,470,9,192,'#777c7c');rect(c,2810,440,248,80,'#335e56',5);text(c,'CROWN TOWER',2830,474,23,'#ece6c7');text(c,'THE WAY UP →',2830,505,19,'#ece6c7');
     for(let i=0;i<16;i++){const x=190+i*463;ellipse(c,x,700,67,4,'#8ea5c91c');ellipse(c,x+4,698,42,1,'#f4c28435');}for(const [x,color] of [[370,'#ffa04d24'],[1400,'#ffc86b30'],[1890,'#ba63fe26'],[2680,'#9cffa526']] as const)softLight(c,x,615,210,color);if(!reduced){for(let i=0;i<18;i++){const x=100+i*411+Math.sin(time*.4+i)*18,y=610-((time*9+i*37)%260);sparkle(c,x,y,1.7,'#ffe9b12c');}}
     this.decorations?.(c); this.drawPlayer(c,p,time,reduced);
     for(let i=0;i<12;i++){const x=200+i*387;path(c,[[x,664],[x+13,660],[x+23,665],[x+9,668]],'#c0a38b55',0);}c.restore();
