@@ -1,5 +1,5 @@
 import { Camera, GameState, Player } from './systems';
-import { encounters, pickups, platforms, voteOptions, type District, type Encounter, type Platform, type Node } from './content';
+import { CITY_FARE, encounters, pickups, platforms, voteOptions, type District, type Encounter, type Platform, type Node } from './content';
 
 export class JumpSystem {
  request(p:Player){p.jumpBuffer=.14;}
@@ -21,14 +21,14 @@ export type Particle={x:number;y:number;vx:number;vy:number;life:number;color:st
 export class CollectibleSystem {
  particles:Particle[]=[];
  collect(state:GameState,p:Player){const found=pickups.filter(item=>item.scene===state.scene&&!state.collected.has(item.id)&&Math.abs(item.x-p.x)<44&&Math.abs(item.y-(p.y-60))<68);
-  for(const item of found){state.collected.add(item.id);if(item.kind==='cash')state.netWorth+=item.value;this.burst(item.x,item.y,item.kind==='cash'?'#b8fb70':'#ffd35e',item.kind==='cash'?`+$${item.value}`:'+1 BANANA');}return found;
+  for(const item of found){state.collected.add(item.id);if(item.kind==='cash')state.netWorth+=item.value;this.burst(item.x,item.y,item.kind==='cash'?'#b8fb70':'#ffd35e',item.kind==='cash'?`+${item.value}!`:'+1 FIND!');}return found;
  }
  burst(x:number,y:number,color:string,label?:string){for(let i=0;i<8;i++)this.particles.push({x,y,vx:Math.cos(i*Math.PI/4)*70,vy:Math.sin(i*Math.PI/4)*55-40,life:.7,color});if(label)this.particles.push({x,y:y-12,vx:0,vy:-35,life:1.3,color,label});}
  update(dt:number){for(const p of this.particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;}this.particles=this.particles.filter(p=>p.life>0);}
  count(state:GameState){return pickups.filter(p=>p.kind==='banana'&&state.collected.has(p.id)).length;}
 }
 export class AchievementSystem { check(state:GameState){if(pickups.filter(p=>p.kind==='banana').every(p=>state.collected.has(p.id))&&!state.flags.has('early-monke')){state.flags.add('early-monke');return true;}return false;} }
-export class InteractionSystem { nearest(state:GameState,p:Player){return encounters.filter(e=>e.scene===state.scene&&Math.abs(e.x-p.x)<110&&p.grounded).sort((a,b)=>Math.abs(a.x-p.x)-Math.abs(b.x-p.x))[0]??null;} }
+export class InteractionSystem { nearest(state:GameState,p:Player){return encounters.filter(e=>e.scene===state.scene&&(!e.requires||e.requires.every(f=>state.flags.has(f)))&&Math.abs(e.x-p.x)<110&&p.grounded).sort((a,b)=>Math.abs(a.x-p.x)-Math.abs(b.x-p.x))[0]??null;} }
 export class NPCSystem { get(scene:District){return encounters.filter(e=>e.scene===scene&&e.kind==='npc');} }
 export class DialogueSystem {
  encounter:Encounter|null=null;nodeId='start';
@@ -48,10 +48,10 @@ export class LocalVoteAdapter implements VoteAdapter { async save(choice:string)
 export class CommunityBoard { constructor(public adapter:VoteAdapter=new LocalVoteAdapter()){} async vote(choice:string,state:GameState){const result=await this.adapter.save(choice);state.vote=result.choice;return result;} }
 export class ProgressStore {
  key='richmonke.mission001.v2';
- save(state:GameState,p:Player,streetX:number){try{localStorage.setItem(this.key,JSON.stringify({version:2,x:state.scene==='street'?p.x:streetX,scene:state.scene,insideX:state.scene==='stop'?p.x:null,collected:[...state.collected],flags:[...state.flags],secrets:[...state.secrets],vote:state.vote,playedSeconds:state.playedSeconds}));return true;}catch{return false;}}
- load(state:GameState,p:Player){try{const raw=localStorage.getItem(this.key);if(!raw)return false;const d=JSON.parse(raw);if(d.version!==2||!Array.isArray(d.collected)||!Array.isArray(d.flags)||!Number.isFinite(d.x))return false;
+ save(state:GameState,p:Player,streetX:number){try{localStorage.setItem(this.key,JSON.stringify({version:3,x:state.scene==='street'?p.x:streetX,scene:state.scene,insideX:state.scene==='stop'?p.x:null,collected:[...state.collected],flags:[...state.flags],secrets:[...state.secrets],vote:state.vote,playedSeconds:state.playedSeconds}));return true;}catch{return false;}}
+ load(state:GameState,p:Player){try{const raw=localStorage.getItem(this.key);if(!raw)return false;const d=JSON.parse(raw);if(![2,3].includes(d.version)||!Array.isArray(d.collected)||!Array.isArray(d.flags)||!Number.isFinite(d.x))return false;
   state.collected=new Set(d.collected.filter((id:unknown)=>pickups.some(p=>p.id===id)));state.netWorth=7+pickups.filter(p=>p.kind==='cash'&&state.collected.has(p.id)).reduce((s,p)=>s+p.value,0);
-  const validFlags=['jumped','doubter','tv','map','terminal','ape','board','challenge','complete','early-monke','moved','jump-used','interacted'];state.flags=new Set(d.flags.filter((id:unknown)=>validFlags.includes(String(id))));state.secrets=new Set(Array.isArray(d.secrets)?d.secrets.filter((id:unknown)=>encounters.some(e=>e.kind==='secret'&&e.id===id)):[]);state.vote=(voteOptions as readonly unknown[]).includes(d.vote)?d.vote:null;state.playedSeconds=Number.isFinite(d.playedSeconds)?Math.max(0,d.playedSeconds):0;p.x=Math.max(90,Math.min(7090,d.x));state.scene='street';return true;
+  const validFlags=['stop-entered','stop','left-stop','rich','ticket','jumped','doubter','tv','map','terminal','ape','board','challenge','complete','early-monke','moved','jump-used','interacted'];state.flags=new Set(d.flags.filter((id:unknown)=>validFlags.includes(String(id))));if(state.flags.has('ticket')){if(state.netWorth>=CITY_FARE)state.netWorth-=CITY_FARE;else state.flags.delete('ticket');}if(d.version===2){state.flags.delete('complete');state.flags.delete('challenge');if(state.flags.has('terminal')){state.flags.add('stop');state.flags.add('stop-entered');state.flags.add('left-stop');}}state.secrets=new Set(Array.isArray(d.secrets)?d.secrets.filter((id:unknown)=>encounters.some(e=>e.kind==='secret'&&e.id===id)):[]);state.vote=(voteOptions as readonly unknown[]).includes(d.vote)?d.vote:null;state.playedSeconds=Number.isFinite(d.playedSeconds)?Math.max(0,d.playedSeconds):0;p.x=Math.max(90,Math.min(7090,d.x));state.scene='street';if(state.flags.has('stop'))state.flags.add('left-stop');return true;
  }catch{return false;}}
  clear(){try{localStorage.removeItem(this.key);}catch{}}
 }

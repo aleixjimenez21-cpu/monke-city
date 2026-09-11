@@ -1,80 +1,60 @@
-# MONKE CITY — upgraded Mission 001
+# MONKE CITY — Episode 001: The Way In
 
-This extends the existing RichMonke game. The original sprite, motel, city drawing, parallax, loading sequence, directional movement, sound controls and responsive presentation remain in place.
+A short playable introduction to the RichMonke universe, refined in the existing game. The illustrated city, character assets, platforming controller and collision model are retained.
 
-## Play
+## The episode
 
-- A / D or left / right arrows: move.
-- SPACE: jump. Jumping includes a short input buffer and coyote time.
-- E: interact with a nearby person, object or door.
-- Mobile: hold the direction buttons, tap JUMP, and tap the contextual interaction button. Movement and jumping support simultaneous touches.
-- Escape / menu: pause. Progress saves locally. Restart clears only this mission's local save.
+1. **Broke:** start outside Monke Motel with $7. Move, jump the broken fence and collect the first $1 on its far side.
+2. **A direction:** the Doubter gives a short push toward Monke Stop. RichMonke answers in his own voice.
+3. **A bigger world:** the shop owner introduces the $12 city tram ticket, missions, expanding streets and community choices in three boxes. The map, TV and community board are optional, visibly labeled interactions. Leave whenever you like after the introduction.
+4. **The reveal:** the existing street screen explains $RICH in two short boxes. ApeOnFone follows with a three-box exchange and Crown Tower camera framing.
+5. **Prove it:** spend $12 of fictional game cash at the repurposed street ticket machine. Take the construction street to the overlook. The uninterrupted action section takes about 15 seconds in the deterministic walk-through.
+6. **An episode ending:** control pauses; the camera reveals Monke City. Timed story beats lead to Mission 002, locked, and the community/story buttons. Those links do not exist yet, as confirmed by the user, so both show a coming-soon notice.
 
-The exploration route is designed for roughly 3–5 minutes of reading, discovery and play. These are pacing targets, not enforced timers. A fast player can finish sooner.
+There is no checkpoint sign, checkpoint notification, checkpoint state or artificial street barrier. Mission objectives guide progress. The ticket is an in-world purchase, not a checkpoint or token transaction. Players can explore past the ticket machine; the objective continues to point to their next meaningful task. The finale requires the core story and a ticket, not optional readings or secrets.
 
-## Mission route
+## Controls
 
-1. Collect nearby fictional Monke Cash: $7 → $8 → $10 → $11. Jump the broken fence.
-2. Meet the Doubter and choose WATCH ME or WHAT DO I NEED.
-3. Enter Monke Stop. Discover the TV transmission, district map and community terminal. The store supports walking, jumping, shelf platforms and a hidden banana.
-4. Explore the alley, poster and strange vending machine. Find more cash and collectibles.
-5. Meet the placeholder ApeOnFone at the bench. His phone encounter focuses on the story, not financial returns. It is a concept encounter, not a confirmed collaboration.
-6. Read the mission board. Choose a future district in a device-local prototype vote. No live vote totals or backend are presented.
-7. Cross the construction section: three obstacles, a puddle and a moving cart. Hits cause only a brief stumble; no death or cash penalty.
-8. Reach the Crown Tower overlook. The final sequence reports actual collected cash, bananas and fictional story access. Mission 002 remains locked.
+- A/D or arrow keys: move.
+- Space: jump.
+- E: interact.
+- Next button, Enter or Space: continue non-choice dialogue.
+- Touch: movement and jump buttons, contextual interaction buttons.
+- Escape/menu: pause. Optional scenes can be closed; first-time main-story conversations finish through their short dialogue sequence.
 
-Five bananas unlock EARLY MONKE. There are three optional secrets. Collecting every cash pickup yields $23; the ending reports the player's actual total rather than inventing a fixed result. All game currency and collectibles have no real-world monetary value.
+The persistent HUD contains only game cash, one objective and banana-coin count. Location titles, objective updates and control hints appear contextually. Speaker names and portraits change when RichMonke replies. Reduced-motion settings suppress secondary animation; the ending can also be skipped to its final card.
 
-## Run and validate
+## Run and check
 
-Use Node 22.13 or newer. Dependencies already exist in this checkout.
+Use Node 22.13 or newer. Run `npm install` if dependencies are absent, then:
 
-- `npm run dev` builds and serves the game on port 3000.
-- `npm run build` builds static production output.
-- `node scripts/test.mjs` runs the deterministic mission and gameplay checks.
-- `node node_modules/typescript/bin/tsc --noEmit` checks types.
+- `node scripts/dev.mjs` — build and serve at http://127.0.0.1:3000/.
+- `node scripts/build.mjs` — static production build into `dist`.
+- `node scripts/test.mjs` — gameplay and full-episode integration checks.
+- `node node_modules/typescript/bin/tsc --noEmit` — type check.
 
-On this Windows workspace, `node scripts/dev.mjs` and `node scripts/build.mjs` can run directly if the npm launcher is unavailable. The existing lightweight Rolldown build is preserved. Restart the preview command after source edits, or rebuild and refresh the browser when the existing static server is already running.
+The server serves rebuilt files without restarting; refresh the browser after a build.
 
-## Architecture
+## Existing architecture
 
-- `client.tsx` and `app/page.tsx`: existing entrypoints, both using the same Game.
-- `game/Game.tsx`: canvas lifecycle, keyboard/touch input and existing opening presentation.
-- `game/systems.ts`: existing Player, Camera, GameState, MissionSystem, SceneTransition, ParallaxLayer and AudioManager, extended for the new chapter.
-- `game/gameplay.ts`: PlayerController, JumpSystem, CollisionSystem, CollectibleSystem, AchievementSystem, NPCSystem, InteractionSystem, DialogueSystem, ChoiceSystem, InteriorSystem, CommunityBoard, VoteAdapter and ProgressStore.
-- `game/runtime.ts`: coordinates scene changes, interactions, mission progression, saves and game events.
-- `game/content.ts`: mission objectives, encounters, dialogue branches, platforms, pickups, vote choices and future official links.
-- `game/environment.ts`: retained city artwork and RichMonke renderer.
-- `game/worldObjects.ts`: new obstacles, NPC placeholders, collectibles, mission board, construction area and store interior.
-- `game/GameHUD.tsx`: cash, collectibles, next objective and contextual prompts.
-- `game/GamePanels.tsx`: discoveries, map, dialogue choices, board, pause and ending.
-- `game/game.css`: original presentation plus responsive upgrade styles.
-- `game/mission.test.ts`: headless gameplay/integration tests.
+`game/content.ts` owns dialogue, mission objectives, collectible placements and encounter purposes. `game/runtime.ts` coordinates story events, shop transitions, the ticket purchase, camera beats and the finale. `game/systems.ts` and `game/gameplay.ts` retain the movement/jump/collision machinery. `GameHUD.tsx` and `GamePanels.tsx` present the episode. `environment.ts`, `worldObjects.ts`, `CharacterArt.ts` and `art.ts` retain the illustrated universe.
 
-## Assets and extension points
+The optional WebMCP controls expose the same bounded movement, jump, interaction and dialogue actions as the player; they cannot teleport or grant mission completion. These support browser accessibility and testing.
 
-The RichMonke sprite remains at `public/assets/character/richmonke.png`, unchanged. Replace it with approved full-body transparent artwork and adapt `GameScene.drawPlayer()` when dedicated idle/walk/jump frames arrive. Original built-in image generation used the supplied official character reference, preserving fur, face, green sunglasses, yellow shorts and cartoon identity while removing jewelry.
+## Saves and game money
 
-Environment assets are code-drawn in `game/environment.ts` and `game/worldObjects.ts`. The interior shares the same renderer and sprite. ApeOnFone's drawn NPC is explicitly temporary.
+The established `richmonke.mission001.v2` storage key is retained. New payloads use version 3 and migrate supported version-2 saves. Earned cash is reconstructed from valid pickup IDs, with the ticket deducted exactly once when owned. Reloading an interior save places the player outside the shop, preserves discoveries and treats that return as leaving the shop. Old completed saves retain their collectibles but gain the newly required story/ticket objectives.
 
-To add the next chapter later, create another mission definition using `game/content.ts`, provide its scene content and select that mission in MissionSystem. The chapter-one orchestrator remains isolated in `game/runtime.ts`; other renderers and generic gameplay systems do not need rebuilding. No next district is playable yet.
+Cash and banana coins are fictional game progress. They have no real-money value and do not represent the $RICH price. Community voting is a device-local practice vote, clearly labeled. ApeOnFone is a concept cameo; collaboration is not confirmed. Set future official links in `communityLinks` only when supplied.
 
-Set the approved X/story and Telegram/community URLs in `communityLinks` in `game/content.ts`. Until then, CTA buttons show an honest coming-soon message. Replace `LocalVoteAdapter` with an authenticated backend adapter when real community voting is available; do not relabel it live until that service is connected.
+## Verification
 
-Saves use `richmonke.mission001.v2` in localStorage. Pickup IDs are deduplicated and validated; cash is recomputed from collected items. Unsupported, malformed and unavailable storage fail gracefully. Resuming an interior save returns to the store's street entrance while retaining discoveries and collectibles.
+The automated suite walks the entire main path using the real movement controller, jumping real obstacles without teleporting. It verifies the first $7 → $8 reward, both Doubter choices, mandatory story concepts, optional shop readings, ticket affordability and single charging, unrestricted street traversal, the 15–25 second action segment, finale, elevated collectibles, discoveries, local votes and save migration.
 
-## Verification and limits
+Browser play-testing on a separate localhost origin verified movement, jumping, first reward, portrait/speaker changes, the shop introduction, leaving without optional readings, and the $RICH reveal. Continuing that browser test was blocked by automatic approval review reporting a usage limit. Therefore the remaining browser play-through and current-version mobile visual review are not claimed complete. The full episode is verified by the local integration suite. No physical-device performance benchmark was performed.
 
-Production bundle and TypeScript checks pass. Tests cover movement, jump and collision, reachable elevated collectibles, exact cash progression, both NPC branches, required discoveries, store entry/exit, voting, incomplete-objective checkpoint, hazard recovery, ending, achievement, persistence and malformed saves. The local HTTP route responds successfully.
+The site is updated locally. The previously hosted version is not changed by this editing request.
 
-Browser interaction tests, physical iPhone/Android tests, visual QA and measured frame-rate/pacing tests have not been performed. The existing optional WebMCP read/start tools are retained and updated; no supported WebMCP validation context was available. This upgrade is prepared locally; the already published initial version is not changed by the editing request alone.
+## Artwork
 
-## Illustrated edition (visual upgrade)
-
-The existing mission, dialogue text, triggers, collectible positions, collision geometry, movement physics and save format are unchanged. Presentation now uses compressed illustrated skyline, transparent storefronts, a warm shop interior, six distinct dressed NPCs and a nine-pose RichMonke atlas. Character drawing includes pose selection, breathing, stride bounce, jump/landing squash, interaction poses, rim lighting and dust. UI includes original banana-coin SVGs, object-positioned prompts and portrait dialogue panels.
-
-Art files are in `public/assets/art/` (about 1.6 MB combined). Source bounds for each character are explicit in `game/art.ts` because the generated atlas is not a perfectly regular grid. The original character remains as a load fallback. The walk/run pose pairs have modest stride differences; this is a compact atlas animation rather than a fully rigged production character. Reduced-motion settings disable secondary animation. Decorative backgrounds and NPCs do not add collision surfaces or interactions. ApeOnFone remains a concept placeholder with the existing disclosure.
-
-Validation: existing automated mission suite passes; TypeScript and production build pass. Browser visual inspection covered the motel, portrait dialogue at desktop and 390×844, and shop interior. This is not a performance benchmark on physical mobile hardware. Rendering checks used a separate disposable harness without modifying the player's saved game.
-
-See `ART-DIRECTION.md` for asset briefs and generation provenance.
+The five compressed environment/character WebP assets are in `public/assets/art/`, totaling about 1.6 MB. The generated walk/run frame pairs use modest stride variations; this is a compact atlas, not a fully rigged character. See `ART-DIRECTION.md` for provenance and asset briefs. No new raster artwork was needed for this narrative refinement.
