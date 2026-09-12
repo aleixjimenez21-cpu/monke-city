@@ -39,3 +39,16 @@
 .start-screen p{display:flex;flex-direction:column;gap:8px;margin:22px 0}.start-screen p small{font-size:10px;color:#b8fb70}.start-screen p b{font-size:17px;letter-spacing:1px}
 .start-screen .start-note{margin-top:22px}.start-screen .primary{padding:17px 25px}.panel-board details{margin:8px 0 14px}.panel-board summary{cursor:pointer;color:#b8fb70;font-size:12px;padding:10px 0}
 @media(max-height:600px){.phase-ready .start-screen{padding:45px 16px}.start-screen h1.opening-worth{font-size:70px;margin:4px 0 10px}.start-screen p{margin:12px 0}.start-screen .start-note{margin-top:12px}}
+
+/* Store information remains on physical objects; only a short subtitle accompanies inspection. */
+.store-inspection{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);width:min(670px,calc(100% - 36px));z-index:25;user-select:text}
+.inspection-caption{position:relative;padding:15px 88px 16px 20px;border-left:3px solid #e7bb6d;background:linear-gradient(90deg,#142332ed,#142332db);box-shadow:0 5px 20px #06111d44;border-radius:3px}
+.inspection-caption>span{font-size:9px;letter-spacing:2px;color:#eac883}.inspection-caption p{font-size:17px;line-height:1.4;margin:7px 0 0;color:#fbefd2}
+.inspection-caption>button{position:absolute;right:18px;bottom:17px;border:0;background:transparent;color:#c5ec98;font-size:10px;font-weight:800;min-height:32px}.inspection-caption>.inspection-close{top:1px;right:6px;bottom:auto;color:#c5d0c9;font-size:20px}
+.store-inspection details{padding:8px 14px;background:#142332ee;font-size:11px}.store-inspection summary{cursor:pointer;color:#c5ec98;padding:5px}.store-vote{display:flex;gap:7px;margin:7px 0}.store-vote button{flex:1;background:#294039;border:1px solid #b4bd9277;border-radius:3px;color:#efe5ce;padding:10px 5px;font-size:10px}.store-vote button[aria-pressed=true]{border-color:#b8fb70}.store-inspection small{color:#c3c6bc;font-size:10px}
+.scene-stop .interact{font-size:9px;min-height:36px;padding:3px 8px;box-shadow:0 3px 0 #0b172955;border-width:1px}.scene-stop .interact kbd{font-size:10px;padding:4px}.scene-stop .location-reveal{display:none}.scene-stop .mission{opacity:.82}
+@media(max-width:600px){.store-inspection{bottom:19%;width:calc(100% - 24px)}.inspection-caption{padding:12px 67px 13px 14px}.inspection-caption p{font-size:15px}.inspection-caption>button{right:10px;font-size:9px}.scene-stop .mission b{font-size:10px}}
+.store-inspection{bottom:3%}
+.scene-stop .mission{padding:5px 14px;min-width:260px}.scene-stop .mission b{font-size:10px;margin-top:5px;letter-spacing:1px}
+@media(max-width:600px){.store-inspection{top:112px;bottom:auto}.scene-stop .mission{min-width:210px}.scene-stop .mission b{font-size:9px}}
+.scene-stop.phase-dialogue .mission{visibility:hidden}

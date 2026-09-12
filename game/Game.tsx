@@ -16,6 +16,7 @@ export default function Game(){
   let raf=0,last=0,uiClock=0,visible=!document.hidden;
   const resize=()=>{const dpr=Math.min(devicePixelRatio||1,2);c.width=Math.round(innerWidth*dpr);c.height=Math.round(innerHeight*dpr);g.viewWidth=800*innerWidth/innerHeight;};resize();
   const down=(e:KeyboardEvent)=>{
+   if(e.key==='Escape'&&g.state.phase==='dialogue'){e.preventDefault();g.closeDialogue();setView(g.snapshot());return;}
    if(e.key==='Escape'&&g.state.phase==='playing'){keys.current.clear();setMenu(true);return;}
    if(g.state.phase==='dialogue'&&!g.dialogue.node?.choices&&['Enter',' '].includes(e.key)){e.preventDefault();if(!e.repeat){g.advance();setView(g.snapshot());}return;}
    if(g.state.phase!=='playing'||g.state.paused)return;
@@ -43,7 +44,7 @@ export default function Game(){
  {view.phase==='loading'&&<div className="loading"><div className="load-bars">▰ ▰ ▰</div><span>LOADING MONKE CITY...</span></div>}
  {view.phase==='ready'&&<section className="start-screen"><span className="eyebrow">NET WORTH</span><h1 className="opening-worth">$7</h1><div className="opening-location"><span className="eyebrow">LOCATION</span><strong>MONKE MOTEL</strong></div><p><small>MISSION #001</small><b>GET INTO MONKE CITY</b></p><button className="primary" onClick={()=>act(g=>g.start(g.hasSave))}>{view.hasSave?'CONTINUE JOURNEY':'START JOURNEY'} <span>→</span></button>{view.hasSave&&<button className="text-button fresh-start" onClick={()=>setMenu(true)}>Start a fresh journey</button>}<div className="start-note">A RICHMONKE STORY · AIM FOR THE CROWN.</div></section>}
  {active&&view.phase!=='ending'&&<GameHUD anchor={engine.current&&view.near?Math.max(12,Math.min(88,100*(view.near.x-engine.current.camera.x)/engine.current.viewWidth)):50} view={view} onInteract={()=>act(g=>g.interact())}/>}
- <DiscoveryPanel view={view} onNext={choice=>act(g=>g.advance(choice))} onClose={()=>act(g=>g.closeDialogue())} onVote={async choice=>{if(engine.current){await engine.current.vote(choice);setView(engine.current.snapshot());}}}/>
+ <DiscoveryPanel onHold={hold=>{if(engine.current)engine.current.inspectionHeld=hold;}} view={view} onNext={choice=>act(g=>g.advance(choice))} onClose={()=>act(g=>g.closeDialogue())} onVote={async choice=>{if(engine.current){await engine.current.vote(choice);setView(engine.current.snapshot());}}}/>
  {view.phase==='ending'&&<Ending view={view} onReplay={()=>act(g=>g.reset())}/>}
  {view.phase==='travel'&&<div className="interior-transition"><span>{view.scene==='stop'?'MONKE STOP':'THE OUTSKIRTS'}</span></div>}
  <footer><div className="district"><i/><span>{view.scene==='stop'?'MONKE STOP / OPEN ALL NIGHT':view.x>3050?'CROWN TOWER OVERLOOK':'MONKE MOTEL / OUTSKIRTS'}</span></div>{view.phase==='playing'?<div className="controls-hint"><kbd>A</kbd><kbd>D</kbd><span>MOVE</span><kbd>SPACE</kbd><span>JUMP</span><kbd>E</kbd><span>INTERACT</span></div>:<span className="build-label">EVERY MONKE STARTS SOMEWHERE.</span>}<span className="chapter-number">01 <span>/ THE OUTSKIRTS</span></span></footer>

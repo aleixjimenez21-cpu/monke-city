@@ -1,3 +1,4 @@
+import {drawStore} from './StoreScene';
 import {art,goldCoin,softLight,sparkle} from './art';
 import {drawNPC} from './CharacterArt';
 import { rect, path, ellipse, text, neon, crown, GameScene } from './environment';
@@ -29,15 +30,5 @@ export function drawPickups(c:C,g:GameRuntime){for(const item of pickups){if(ite
  for(const p of g.collectibles.particles){c.save();c.globalAlpha=Math.min(1,p.life*1.5);if(p.label)text(c,p.label,p.x,p.y,14,p.color,'center');else sparkle(c,p.x,p.y,4,p.color);c.restore();}
 }
 export function drawInterior(c:C,w:number,h:number,g:GameRuntime,scene:GameScene){
- const grad=c.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#312537');grad.addColorStop(.6,'#795243');grad.addColorStop(1,'#b8875a');c.fillStyle=grad;c.fillRect(0,0,w,h);c.save();c.translate(-g.camera.x,0);if(!art.images.interior){rect(c,20,250,1320,420,'#9b704e');for(let y=280;y<635;y+=38){for(let x=25;x<1340;x+=84)rect(c,x+(y%76?0:40),y,78,32,'#a97e5833',1);} rect(c,20,250,1320,25,'#696d73');rect(c,20,647,1320,70,'#8e827b');for(let i=0;i<13;i++)path(c,[[i*110,717],[i*110+25,648],[i*110+30,648],[i*110+5,717]],'#615d64',0);
- }else{c.drawImage(art.images.interior,0,0,Math.max(1400,w),800);const shade=c.createLinearGradient(0,205,0,745);shade.addColorStop(0,'#ffcf6805');shade.addColorStop(1,'#22182728');c.fillStyle=shade;c.fillRect(0,0,Math.max(1400,w),800);}
-
- // Three readable exhibits, directly along the route. Inspecting is optional.
- for(const [x,title] of [[300,'CITY MAP'],[550,'COMMUNITY'],[820,'$RICH']] as const){rect(c,x-111,360,222,219,'#293a3b',5);rect(c,x-102,370,204,199,'#152d32',1);text(c,title,x,397,21,'#e9dba8','center');}
- text(c,'OUTSKIRTS',300,432,17,'#b8fb70','center');text(c,'↓ DOWNTOWN',300,462,17,'#d7ded0','center');text(c,'↓ CROWN DISTRICT',300,492,16,'#d7ded0','center');crown(c,285,509,30);text(c,'NEW MISSIONS. NEW DISTRICTS.',300,552,10,'#e7ddbd','center');
- text(c,'THE COMMUNITY',550,435,19,'#b8fb70','center');text(c,'SHAPES WHAT’S NEXT.',550,466,16,'#e7ddbd','center');text(c,'MISSIONS · DECISIONS',550,516,13,'#d7ded0','center');text(c,'STORY',550,542,15,'#d7ded0','center');
- text(c,'THE TOKEN OF THE',820,435,16,'#b8fb70','center');text(c,'RICHMONKE UNIVERSE',820,464,16,'#e7ddbd','center');text(c,'THE STORY GROWS.',820,516,14,'#d7ded0','center');text(c,'THE CITY GROWS.',820,542,14,'#d7ded0','center');
- for(const s of platforms.filter(s=>s.scene==='stop'))rect(c,s.x,s.y,s.width,s.height,'#b18f68');
- rect(c,978,405,86,247,'#253d37');rect(c,988,419,66,137,'#6b9582');text(c,'CITY →',1020,445,17,'#e9dba8','center');rect(c,1047,573,7,17,'#e5cf83');label(c,'EXIT →',1020,391,'#dceba8');
- drawPickups(c,g);scene.drawPlayer(c,g.player,g.time,g.reduced);c.restore();
+ c.fillStyle='#101c2a';c.fillRect(0,0,w,h);c.save();c.translate(-g.camera.x,0);drawStore(c,g);drawPickups(c,g);scene.drawPlayer(c,g.player,g.time,g.reduced);c.restore();
 }

@@ -6,7 +6,7 @@ Compression and pacing pass on the existing RichMonke game. Illustrated assets, 
 
 1. Black opening: $7, Monke Motel, Mission 001, Start Journey. Control begins 0.35 seconds after starting.
 2. First dollar before the fence: $7 → $8, jump, then the Doubter. One required NPC, three short dialogue boxes, either reply works.
-3. Monke Stop: three visible exhibits explain the city’s districts and missions, community decisions, and $RICH. Inspections are optional. The community practice vote is behind an optional disclosure.
+3. Monke Stop: a physical wall map, a working CRT, a cork notice board, a monkey shopkeeper and a small checkout display. All five interactions are optional. A short subtitle accompanies the world, rather than opening an information menu. The community practice vote remains behind an optional disclosure.
 4. Leave through the right-hand city exit. A short run with two jumps, a puddle and two banana coins leads directly to the overlook.
 5. Crown Tower reveal, Mission 001 complete, started with $7, the unwritten future. The final card appears after six seconds, with Mission 002 locked and community/story buttons. Official links do not exist yet; buttons show “Official links coming soon.”
 
@@ -34,9 +34,9 @@ The running server serves rebuilt files; refresh after a build.
 
 ## Verification
 
-The automated suite completes the mission through the real physics controller without teleporting, both skipping and inspecting all three exhibits. It checks reward order, required story length, collision and reachable jumps, final-run timing, optional voting, persistence and legacy-save handling.
+The automated suite completes the mission through the real physics controller without teleporting, both skipping and inspecting all five shop interactions. It checks reward order, required story length, collision and reachable jumps, final-run timing, optional voting, persistence and legacy-save handling.
 
-Browser playthrough completed the motel, first reward, Doubter, all three exhibits, elevated cash, final jumps, both banana coins and ending. Desktop and 390 × 844 ending layouts were visually inspected. Build and TypeScript checks pass. No physical-device performance benchmark or first-time user timing study was performed.
+Browser playthrough completed the motel, first reward, Doubter, all three exhibits, elevated cash, final jumps, both banana coins and ending. The redesigned shop, map focus, TV broadcast, local vote, shopkeeper, $RICH display, exit and 390 × 844 mobile inspection layout were checked in the browser. Build and TypeScript checks pass. No physical-device performance benchmark or first-time user timing study was performed.
 
 ## Persistence and configuration
 
@@ -46,4 +46,12 @@ Cash and coins are fictional game progress. The existing practice vote is device
 
 `game/content.ts` owns pacing, placements and copy. `runtime.ts` handles transitions, objectives and ending. `systems.ts` and `gameplay.ts` retain physics and interactions; the existing renderers and art atlas remain in use. WebMCP offers the same bounded controls as the player and cannot teleport or grant completion.
 
-This edit is local; it does not update the previously published site. See `ART-DIRECTION.md` for artwork provenance. No new raster assets were needed.
+This edit is local; it does not update the previously published site. See `ART-DIRECTION.md` for artwork provenance. The interior and shopkeeper were generated with the built-in image tool; prompts and asset paths are recorded in `MONKE-STOP-ART.md`.
+
+## Monke Stop interior redesign
+
+The existing scene now uses a compact illustrated shop background. There are no freestanding information panels. The map and notice-board annotations are drawn directly on their physical surfaces; TV frames play inside its CRT glass. The shopkeeper is a separate alpha sprite masked behind the counter. Lighting, CRT scanlines, fridge glints, coffee steam, plants and the shopkeeper have restrained animation, disabled under reduced motion.
+
+The existing dialogue/interact logic drives short in-world inspections: map 2.5s, TV 4s, board 3s, shopkeeper 4.2s over three lines, and checkout 3.4s over two lines. Next or Escape lets the player leave sooner. Opening the optional practice vote holds its inspection timer until the choice UI is closed. A visit inspecting everything is designed around 15–25s including movement; no minimum visit time is enforced.
+
+Physics, RichMonke’s character assets, street story, collectibles, money and episode finale are retained. StoreScene.ts handles the new interior rendering. Save payload version 4 remains compatible, with the additional optional shop discoveries whitelisted.

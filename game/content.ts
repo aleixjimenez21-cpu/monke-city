@@ -3,7 +3,7 @@ export type Platform = { id: string; x: number; y: number; width: number; height
 export type Pickup = { id: string; x: number; y: number; scene: District; kind: 'cash' | 'banana'; value: number };
 export type Speaker = 'hero' | 'doubter' | 'owner' | 'ape';
 export type Node = { speaker?:Speaker; mood?:'skeptical'|'confident'|'thinking'|'smiling'|'surprised'; text: string; next?: string; choices?: { label: string; next: string }[]; effect?: string };
-export type Encounter = { id: string; x: number; scene: District; label: string; title: string; kind: 'npc' | 'door' | 'tv' | 'map' | 'terminal' | 'board' | 'secret' | 'sign'; nodes?: Record<string, Node>; flag?: string; story?:boolean; requires?: string[] };
+export type Encounter = { id: string; x: number; scene: District; label: string; title: string; kind: 'npc' | 'door' | 'tv' | 'map' | 'terminal' | 'board' | 'secret' | 'sign'; nodes?: Record<string, Node>; flag?: string; story?:boolean; duration?:number; focusY?:number; requires?: string[] };
 export const mission001 = {
  id:'001',name:'GET INTO MONKE CITY',startX:370,endX:3150,worldWidth:3550,
  challenge:{start:1350,end:3050},nextMission:'002',
@@ -38,8 +38,10 @@ export const encounters: Encounter[] = [
   route:{speaker:'doubter',mood:'skeptical',text:'Then start walking. Monke Stop is ahead.'},
  }},
  {id:'store',x:1120,scene:'street',kind:'door',label:'ENTER MONKE STOP',title:'MONKE STOP'},
- {id:'exit',x:1020,scene:'stop',kind:'door',label:'TO THE CITY →',title:'EXIT'},
- {id:'map',x:300,scene:'stop',kind:'map',label:'CITY MAP',title:'ONE CITY. NEW MISSIONS.',flag:'map'},
- {id:'terminal',x:550,scene:'stop',kind:'board',label:'COMMUNITY BOARD',title:'COMMUNITY BOARD',flag:'terminal'},
- {id:'rich',x:820,scene:'stop',kind:'terminal',label:'$RICH TERMINAL',title:'$RICH',flag:'rich',nodes:{start:{text:'The token of the RichMonke universe.',next:'story'},story:{text:'The story grows. The city grows.'}}},
+ {id:'exit',x:1090,scene:'stop',kind:'door',label:'TO THE CITY →',title:'EXIT'},
+ {id:'map',x:475,scene:'stop',kind:'map',label:'VIEW MAP',title:'CITY MAP',flag:'map',duration:2.5,focusY:275,nodes:{start:{text:'Monke City gets bigger with every mission.'}}},
+ {id:'tv',x:570,scene:'stop',kind:'tv',label:'WATCH',title:'MONKE TV',flag:'tv',duration:4,focusY:380,nodes:{start:{text:'$7. One monke. One city. One journey.',effect:'broadcast'}}},
+ {id:'terminal',x:690,scene:'stop',kind:'board',label:'CHECK BOARD',title:'MONKE CITY BOARD',flag:'terminal',duration:3,focusY:270,nodes:{start:{text:'Missions. Decisions. New districts.'}}},
+ {id:'owner',x:850,scene:'stop',kind:'npc',label:'TALK',title:'THE SHOPKEEPER',flag:'owner',duration:1.4,focusY:325,nodes:{start:{speaker:'owner',mood:'smiling',text:'First time in Monke City?',next:'reply'},reply:{speaker:'hero',mood:'confident',text:'Not for long.',next:'like'},like:{speaker:'owner',mood:'smiling',text:'Heh. I like this one.'}}},
+ {id:'rich',x:945,scene:'stop',kind:'terminal',label:'CHECK $RICH',title:'$RICH',flag:'rich',duration:1.7,focusY:325,nodes:{start:{text:'The token of the RichMonke universe.',next:'story'},story:{text:'Story. City. Community.'}}},
 ];
