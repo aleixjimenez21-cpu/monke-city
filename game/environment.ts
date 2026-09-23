@@ -1,5 +1,6 @@
 import {t} from './locale';
 import {art,softLight,sparkle} from './art';
+import {assetUrl} from './assets';
 import {CharacterArt} from './CharacterArt';
 import { Camera, ParallaxLayer, Player } from './systems';
 type C = CanvasRenderingContext2D;
@@ -18,7 +19,7 @@ function shop(c:C,x:number,w:number,name:string,color:string){rect(c,x,437,w,211
 export class GameScene {
   layers=[new ParallaxLayer(.04),new ParallaxLayer(.13),new ParallaxLayer(.28),new ParallaxLayer(.52),new ParallaxLayer(1),new ParallaxLayer(1.2)];
   character=new CharacterArt(); sprite:HTMLImageElement|null=null; decorations:((c:C)=>void)|null=null;foreground:((c:C)=>void)|null=null;hidePlayer=false;playerOpacity=1;
-  load(){void art.load();const im=new Image();im.src='/assets/character/richmonke.png';im.onload=()=>this.sprite=im;}
+  load(){void art.load();const im=new Image();im.src=assetUrl('/assets/character/richmonke.png');im.onload=()=>this.sprite=im;}
   draw(c:C,w:number,h:number,camera:Camera,p:Player,time:number,reduced:boolean,phase:string){
     c.clearRect(0,0,w,h);const sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#10152f');sky.addColorStop(.57,'#4b4268');sky.addColorStop(1,'#987e86');c.fillStyle=sky;c.fillRect(0,0,w,h);
     const descend=camera.descent*330;c.save();c.translate(0,descend);

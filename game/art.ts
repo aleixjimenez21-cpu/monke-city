@@ -1,6 +1,11 @@
 /** Rendering assets only. No collision, mission or input state lives here. */
+import { assetUrl } from './assets';
+
 export type Frame={image:CanvasImageSource;x:number;y:number;w:number;h:number};
 export const artUrls={interior:'/assets/art/monke-stop.webp',keeper:'/assets/art/shopkeeper.webp',skyline:'/assets/art/skyline.webp',buildings:'/assets/art/buildings.webp',npcs:'/assets/art/npcs.webp',hero:'/assets/art/richmonke-poses.webp'};
+for (const key of Object.keys(artUrls) as Array<keyof typeof artUrls>) {
+  artUrls[key] = assetUrl(artUrls[key]);
+}
 export class ArtLibrary {
  images:Partial<Record<keyof typeof artUrls,HTMLImageElement>>={};hero:Frame[]=[];npcs:Frame[]=[];promise:Promise<void>|null=null;
  load(){if(this.promise)return this.promise;this.promise=Promise.all(Object.entries(artUrls).map(async([key,url])=>{const im=new Image();im.decoding='async';im.src=url;await new Promise<void>(resolve=>{im.onload=()=>resolve();im.onerror=()=>resolve();});if(!im.naturalWidth)return;this.images[key as keyof typeof artUrls]=im;if(key==='hero')this.hero=this.regions(im,[[87,13,272,423],[477,16,305,415],[860,14,344,416],[48,446,348,375],[469,444,340,377],[857,437,355,362],[60,882,343,329],[487,832,341,406],[951,831,207,410]]);if(key==='npcs')this.npcs=this.regions(im,[[76,48,289,598],[467,176,348,465],[852,82,379,568],[33,658,424,573],[490,656,336,572],[861,673,376,555]]);})).then(()=>{});return this.promise;}

@@ -35,6 +35,7 @@ yarn-error.log*
 .netlify-appdata/
 .netlify-localappdata/
 .npm-cache/
+richmonke-netlify-dist-*.zip
 next-env.d.ts
 /dist/
 /.wrangler/
