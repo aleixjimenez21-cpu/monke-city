@@ -15,7 +15,11 @@ export const mission001 = {
   {id:'complete',label:'Reach the overlook',x:3150},
  ],
 };
-export const communityLinks: { community: string | null; story: string | null } = { community: null, story: null };
+export const socialLinks = {
+ x: 'https://x.com/richmonkesol?s=11',
+ telegram: 'https://t.me/+fvJ27gtODtoxZDk8',
+} as const;
+export const communityLinks: { community: string | null; story: string | null } = { community: socialLinks.telegram, story: socialLinks.x };
 export const voteOptions = ['Casino District', 'Downtown', 'Harbor'] as const;
 export const platforms: Platform[] = [
  {id:'first-fence',x:560,y:598,width:78,height:64,scene:'street',kind:'barrier'},

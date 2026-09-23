@@ -4,12 +4,12 @@ import { GameScene } from './environment';
 import { GameRuntime, type GameSnapshot } from './runtime';
 import { drawInterior, drawStreetObjects } from './worldObjects';
 import { GameHUD } from './GameHUD';
-import { DiscoveryPanel, Ending, GameMenu } from './GamePanels';
+import { DiscoveryPanel, Ending, GameMenu, SocialButtons } from './GamePanels';
 import { registerGameTools } from './webmcp';
 
 export default function Game(){
  const canvas=useRef<HTMLCanvasElement>(null),engine=useRef<GameRuntime|null>(null),keys=useRef(new Set<string>());
- const [view,setView]=useState<GameSnapshot>(()=>new GameRuntime().snapshot()),[muted,setMuted]=useState(true),[menu,setMenu]=useState(false);
+ const [view,setView]=useState<GameSnapshot>(()=>new GameRuntime().snapshot()),[muted,setMuted]=useState(true),[menu,setMenu]=useState(false),[social,setSocial]=useState(false);
  const act=(fn:(g:GameRuntime)=>void)=>{const g=engine.current;if(g){keys.current.clear();fn(g);setView(g.snapshot());}};
  useEffect(()=>{
   const g=new GameRuntime(),scene=new GameScene(),c=canvas.current!,ctx=c.getContext('2d')!;engine.current=g;g.init();scene.load();scene.decorations=context=>drawStreetObjects(context,g);g.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -40,9 +40,9 @@ export default function Game(){
  const move=(direction:string)=>(e:React.PointerEvent<HTMLButtonElement>)=>{e.currentTarget.setPointerCapture(e.pointerId);keys.current.add(direction);};const release=(direction:string)=>()=>keys.current.delete(direction);
  const active=['playing','arriving','dialogue','travel','ending'].includes(view.phase);
  return <main className={`game phase-${view.phase} scene-${view.scene}`}><canvas ref={canvas} aria-label="Monke City. Move with A and D, jump with Space, interact with E. Start with seven dollars, learn about Monke City, discover Monke Stop and reach the overlook."/><div className="film-grain"/>
- <div className="brand">RICHMONKE<span> $RICH</span></div><div className="top-actions"><button onClick={()=>{try{const g=engine.current;if(g)setMuted(g.audio.toggle());}catch{engine.current?.tell('Sound is unavailable in this browser.');}}} aria-label={muted?'Turn sound on':'Mute sound'}>{muted?'◌':'◉'} <span>SOUND {muted?'OFF':'ON'}</span></button><button className="menu-button" aria-label="Open game menu" onClick={()=>setMenu(true)}>☰</button></div>
+ <div className="brand">RICHMONKE<span> $RICH</span></div><div className="top-actions"><div className="social-dropdown"><button className="social-toggle" aria-expanded={social} aria-controls="social-links" onClick={()=>setSocial(open=>!open)}>COMMUNITY</button>{social&&<div id="social-links" className="social-menu"><SocialButtons compact/></div>}</div><button onClick={()=>{try{const g=engine.current;if(g)setMuted(g.audio.toggle());}catch{engine.current?.tell('Sound is unavailable in this browser.');}}} aria-label={muted?'Turn sound on':'Mute sound'}>{muted?'◌':'◉'} <span>SOUND {muted?'OFF':'ON'}</span></button><button className="menu-button" aria-label="Open game menu" onClick={()=>setMenu(true)}>☰</button></div>
  {view.phase==='loading'&&<div className="loading"><div className="load-bars">▰ ▰ ▰</div><span>LOADING MONKE CITY...</span></div>}
- {view.phase==='ready'&&<section className="start-screen"><span className="eyebrow">NET WORTH</span><h1 className="opening-worth">$7</h1><div className="opening-location"><span className="eyebrow">LOCATION</span><strong>MONKE MOTEL</strong></div><p><small>MISSION #001</small><b>GET INTO MONKE CITY</b></p><button className="primary" onClick={()=>act(g=>g.start(g.hasSave))}>{view.hasSave?'CONTINUE JOURNEY':'START JOURNEY'} <span>→</span></button>{view.hasSave&&<button className="text-button fresh-start" onClick={()=>setMenu(true)}>Start a fresh journey</button>}<div className="start-note">A RICHMONKE STORY · AIM FOR THE CROWN.</div></section>}
+ {view.phase==='ready'&&<section className="start-screen"><span className="eyebrow">NET WORTH</span><h1 className="opening-worth">$7</h1><div className="opening-location"><span className="eyebrow">LOCATION</span><strong>MONKE MOTEL</strong></div><p><small>MISSION #001</small><b>GET INTO MONKE CITY</b></p><button className="primary" onClick={()=>act(g=>g.start(g.hasSave))}>{view.hasSave?'CONTINUE JOURNEY':'START JOURNEY'} <span>→</span></button><SocialButtons compact/>{view.hasSave&&<button className="text-button fresh-start" onClick={()=>setMenu(true)}>Start a fresh journey</button>}<div className="start-note">A RICHMONKE STORY · AIM FOR THE CROWN.</div></section>}
  {active&&view.phase!=='ending'&&<GameHUD anchor={engine.current&&view.near?Math.max(12,Math.min(88,100*(view.near.x-engine.current.camera.x)/engine.current.viewWidth)):50} view={view} onInteract={()=>act(g=>g.interact())}/>}
  <DiscoveryPanel onHold={hold=>{if(engine.current)engine.current.inspectionHeld=hold;}} view={view} onNext={choice=>act(g=>g.advance(choice))} onClose={()=>act(g=>g.closeDialogue())} onVote={async choice=>{if(engine.current){await engine.current.vote(choice);setView(engine.current.snapshot());}}}/>
  {view.phase==='ending'&&<Ending view={view} onReplay={()=>act(g=>g.reset())}/>}
