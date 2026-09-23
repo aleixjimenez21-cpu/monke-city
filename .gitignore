@@ -31,6 +31,10 @@ yarn-error.log*
 
 # deployment and generated files
 .vercel
+.netlify
+.netlify-appdata/
+.netlify-localappdata/
+.npm-cache/
 next-env.d.ts
 /dist/
 /.wrangler/
