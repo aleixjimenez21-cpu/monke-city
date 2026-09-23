@@ -1,3 +1,4 @@
+import {t} from './locale';
 import {art,softLight,sparkle} from './art';
 import {CharacterArt} from './CharacterArt';
 import { Camera, ParallaxLayer, Player } from './systems';
@@ -6,7 +7,7 @@ const ink = '#101427';
 export function rect(c:C,x:number,y:number,w:number,h:number,fill:string,line=3) { c.fillStyle=fill;c.fillRect(x,y,w,h);if(line){c.strokeStyle=ink;c.lineWidth=line;c.strokeRect(x,y,w,h);if(w>35&&h>35){const bevel=c.createLinearGradient(x,y,x,y+h);bevel.addColorStop(0,'#ffffff1a');bevel.addColorStop(.4,'#ffffff00');bevel.addColorStop(1,'#07122540');c.fillStyle=bevel;c.fillRect(x+line,y+line,w-line*2,h-line*2);c.strokeStyle='#dfe5df33';c.lineWidth=1;c.strokeRect(x+5,y+5,w-10,h-10);}} }
 export function path(c:C,points:number[][],fill:string,line=3){c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fillStyle=fill;c.fill();if(line){c.strokeStyle=ink;c.lineWidth=line;c.stroke();}}
 export function ellipse(c:C,x:number,y:number,rx:number,ry:number,fill:string){c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fillStyle=fill;c.fill();}
-export function text(c:C,s:string,x:number,y:number,size:number,color:string,align:CanvasTextAlign='left'){c.font=`900 ${size}px Arial, sans-serif`;c.fillStyle=color;c.textAlign=align;c.fillText(s,x,y);}
+export function text(c:C,s:string,x:number,y:number,size:number,color:string,align:CanvasTextAlign='left'){c.font=`900 ${size}px Arial, sans-serif`;c.fillStyle=color;c.textAlign=align;c.fillText(t(s),x,y);}
 export function neon(c:C,s:string,x:number,y:number,size:number,color:string){c.save();c.shadowColor=color;c.shadowBlur=14;text(c,s,x,y,size,color);c.restore();}
 function windows(c:C,x:number,y:number,w:number,h:number,seed:number,bright=false){for(let i=0;i<w-20;i+=26)for(let j=0;j<h-20;j+=31){const n=Math.sin(i*3+j+seed);rect(c,x+12+i,y+15+j,9,14,n>.1?(bright?'#a6ecc1':'#9a94bb'):'#353351',0);}}
 function building(c:C,x:number,w:number,h:number,color:string,seed:number){const m=c.getTransform(),sx=m.a*x+m.e;if(sx+w*m.a<0||sx>c.canvas.width)return;rect(c,x,575-h,w,h,color);rect(c,x-5,568-h,w+10,9,'#383448');windows(c,x,575-h,w,h,seed);}
@@ -16,7 +17,7 @@ function car(c:C,x:number,color:string){ellipse(c,x+75,670,93,12,'#0d152855');pa
 function shop(c:C,x:number,w:number,name:string,color:string){rect(c,x,437,w,211,'#333449');rect(c,x-8,424,w+16,45,color);text(c,name,x+w/2,454,22,'#efe7d0','center');rect(c,x+18,492,w-90,106,'#192c3a');rect(c,x+w-60,487,42,155,'#242936');rect(c,x+w-49,500,21,76,'#4f6771');for(let k=0;k<4;k++)rect(c,x+22+k*30,510,14,55,'#678878',0);path(c,[[x-6,472],[x+w+6,472],[x+w+16,493],[x-15,493]],'#77605e');}
 export class GameScene {
   layers=[new ParallaxLayer(.04),new ParallaxLayer(.13),new ParallaxLayer(.28),new ParallaxLayer(.52),new ParallaxLayer(1),new ParallaxLayer(1.2)];
-  character=new CharacterArt(); sprite:HTMLImageElement|null=null; decorations:((c:C)=>void)|null=null;
+  character=new CharacterArt(); sprite:HTMLImageElement|null=null; decorations:((c:C)=>void)|null=null;foreground:((c:C)=>void)|null=null;hidePlayer=false;playerOpacity=1;
   load(){void art.load();const im=new Image();im.src='/assets/character/richmonke.png';im.onload=()=>this.sprite=im;}
   draw(c:C,w:number,h:number,camera:Camera,p:Player,time:number,reduced:boolean,phase:string){
     c.clearRect(0,0,w,h);const sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,'#10152f');sky.addColorStop(.57,'#4b4268');sky.addColorStop(1,'#987e86');c.fillStyle=sky;c.fillRect(0,0,w,h);
@@ -45,7 +46,7 @@ export class GameScene {
     this.facade(c,2520,270,265,'CROWN WORKS',true);
     rect(c,2910,470,9,192,'#777c7c');rect(c,2810,440,248,80,'#335e56',5);text(c,'CROWN TOWER',2830,474,23,'#ece6c7');text(c,'THE WAY UP →',2830,505,19,'#ece6c7');
     for(let i=0;i<16;i++){const x=190+i*463;ellipse(c,x,700,67,4,'#8ea5c91c');ellipse(c,x+4,698,42,1,'#f4c28435');}for(const [x,color] of [[370,'#ffa04d24'],[1400,'#ffc86b30'],[1890,'#ba63fe26'],[2680,'#9cffa526']] as const)softLight(c,x,615,210,color);if(!reduced){for(let i=0;i<18;i++){const x=100+i*411+Math.sin(time*.4+i)*18,y=610-((time*9+i*37)%260);sparkle(c,x,y,1.7,'#ffe9b12c');}}
-    this.decorations?.(c); this.drawPlayer(c,p,time,reduced);
+    this.decorations?.(c);if(!this.hidePlayer){c.save();c.globalAlpha=this.playerOpacity;this.drawPlayer(c,p,time,reduced);c.restore();}this.foreground?.(c);
     for(let i=0;i<12;i++){const x=200+i*387;path(c,[[x,664],[x+13,660],[x+23,665],[x+9,668]],'#c0a38b55',0);}c.restore();
     c.save();c.translate(-camera.x*1.2,0);for(let i=0;i<7;i++){const x=i*910+950;ellipse(c,x,804,110,31,'#111c2d');for(let j=0;j<8;j++)path(c,[[x+j*18-70,820],[x+j*18-90,762-j%3*11],[x+j*18-65,781],[x+j*18-57,756],[x+j*18-50,820]],'#111c2d',0);}c.restore();c.restore();
     if(phase==='ending'&&!reduced){for(let i=0;i<35;i++){const x=(i*137.3)%w,y=(time*23+i*61)%h;sparkle(c,x,y,2+i%3,i%2?'#ffd97877':'#b8fb7077');}}

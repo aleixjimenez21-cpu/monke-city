@@ -1,9 +1,10 @@
+import {t as translate} from './locale';
 import {art,frame,softLight,sparkle} from './art';
 import {rect,path,ellipse,text,crown} from './environment';
 import type {GameRuntime} from './runtime';
 type C=CanvasRenderingContext2D;
 const W=1180,H=800;
-function ink(c:C,s:string,x:number,y:number,size=10,color='#263d3f'){c.save();c.font=`bold ${size}px "Comic Sans MS", cursive`;c.fillStyle=color;c.textAlign='center';c.fillText(s,x,y);c.restore();}
+function ink(c:C,s:string,x:number,y:number,size=10,color='#263d3f'){c.save();c.font=`bold ${size}px "Comic Sans MS", cursive`;c.fillStyle=color;c.textAlign='center';c.fillText(translate(s),x,y);c.restore();}
 function paper(c:C,x:number,y:number,w:number,h:number,angle:number,fill='#eddbac'){c.save();c.translate(x,y);c.rotate(angle);c.shadowColor='#101c3088';c.shadowBlur=3;c.shadowOffsetY=2;path(c,[[-w/2,-h/2],[w/2-3,-h/2-1],[w/2,h/2],[-w/2+2,h/2-2]],fill,1);c.shadowBlur=0;ellipse(c,0,-h/2+3,2.6,2.6,'#b94e37');c.restore();}
 export function drawStore(c:C,g:GameRuntime){
  const im=art.images.interior,t=g.reduced?0:g.time,e=g.state.phase==='dialogue'?g.dialogue.encounter:null,active=e?.id;
